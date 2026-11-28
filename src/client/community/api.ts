@@ -53,5 +53,5 @@ export const postPrint = (board: string, route: readonly Triangle[], name: strin
 export const votePrint = (board: string, id: string) => call<CommunityPrint>(`/prints/${encodeURIComponent(id)}/vote`, { board });
 export const submitBoard = (code: string, name: string) => call<CommunityBoard>('/boards', { code, name });
 export const fetchBoards = () => call<{ boards: CommunityBoard[] }>('/boards');
-export const postComment = (board: string, route: readonly Triangle[], undos: number) =>
-  call<CommentResponse>('/comment', { board, route, undos });
+export const postComment = (board: string, route: readonly Triangle[], undos: number, as: 'user' | 'app') =>
+  call<CommentResponse>('/comment', { board, route, undos, as });

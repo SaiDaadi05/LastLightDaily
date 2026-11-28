@@ -240,7 +240,14 @@ api.post(
       stats.total >= 5 ? `✦ ${routeShare}% of players took my route` : '✦ One of the first to light this sky',
     ];
     if (streak > 1) lines.push('', `🔥 ${streak} nights in a row`);
-    const comment = await reddit.submitComment({ id: postId, text: lines.join('\n'), runAs: 'USER' });
+    // From the player's own account when Reddit allows it; otherwise the app
+    // posts it and names the player.
+    const asUser = b.as !== 'app';
+    if (!asUser) {
+      const username = await reddit.getCurrentUsername();
+      lines[0] = `u/${username ?? 'someone'} lit ${label}`;
+    }
+    const comment = await reddit.submitComment({ id: postId, text: lines.join('\n'), runAs: asUser ? 'USER' : 'APP' });
     return { ok: true, url: `https://www.reddit.com${comment.permalink}` };
   })
 );
