@@ -1,61 +1,73 @@
-import './index.css';
+import './fonts';
+import './splash.css';
 
-import { navigateTo } from '@devvit/web/client';
-import { context, requestExpandedMode } from '@devvit/web/client';
-import { StrictMode } from 'react';
+import { requestExpandedMode } from '@devvit/web/client';
+import { StrictMode, useEffect, useState, type MouseEvent } from 'react';
 import { createRoot } from 'react-dom/client';
+import type { SplashResponse } from '../shared/api';
+import { fetchSplash } from './community/api';
 
+const LEVEL = { easy: 'Easy', medium: 'Medium', hard: 'Hard' } as const;
+
+/** What people see in the feed: tonight's sky, how many lit it, and a way in. */
 export const Splash = () => {
+  const [data, setData] = useState<SplashResponse | null>(null);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    void fetchSplash().then((d) => (d ? setData(d) : setFailed(true)));
+  }, []);
+
+  const tonight = data ? data.night === data.tonight : true;
+  const play = (e: MouseEvent) => requestExpandedMode(e.nativeEvent, 'game');
+
   return (
-    <div className="flex relative flex-col justify-center items-center min-h-screen gap-4 bg-white dark:bg-gray-900">
-      <img
-        className="object-contain w-1/2 max-w-[250px] mx-auto"
-        src="/snoo.png"
-        alt="Snoo"
-      />
-      <div className="flex flex-col items-center gap-2">
-        <h1 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
-          Hey {context.username ?? 'user'} 👋
-        </h1>
-        <p className="text-base text-center text-gray-600 dark:text-gray-300">
-          Edit{' '}
-          <span className="bg-[#e5ebee] dark:bg-gray-700 px-1 py-0.5 rounded">
-            src/client/splash.tsx
-          </span>{' '}
-          to get started.
-        </p>
-      </div>
-      <div className="flex items-center justify-center mt-5">
-        <button
-          className="flex items-center justify-center bg-[#d93900] dark:bg-orange-600 text-white w-auto h-10 rounded-full cursor-pointer transition-colors px-4 hover:bg-[#c23300] dark:hover:bg-orange-700"
-          onClick={(e) => requestExpandedMode(e.nativeEvent, 'game')}
-        >
-          Tap to Start
-        </button>
-      </div>
-      <footer className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 text-[0.8em] text-gray-600 dark:text-gray-400">
-        <button
-          className="cursor-pointer hover:text-gray-900 dark:hover:text-white transition-colors"
-          onClick={() => navigateTo('https://developers.reddit.com/docs')}
-        >
-          Docs
-        </button>
-        <span className="text-gray-300 dark:text-gray-600">|</span>
-        <button
-          className="cursor-pointer hover:text-gray-900 dark:hover:text-white transition-colors"
-          onClick={() => navigateTo('https://www.reddit.com/r/Devvit')}
-        >
-          r/Devvit
-        </button>
-        <span className="text-gray-300 dark:text-gray-600">|</span>
-        <button
-          className="cursor-pointer hover:text-gray-900 dark:hover:text-white transition-colors"
-          onClick={() => navigateTo('https://discord.com/invite/R7yu2wh9Qz')}
-        >
-          Discord
-        </button>
-      </footer>
-    </div>
+    <main className="splash" onClick={play}>
+      <div className="splash-moon" aria-hidden />
+      <header className="splash-head">
+        <svg width="30" height="30" viewBox="0 0 40 40" aria-hidden>
+          <rect width="40" height="40" rx="11" fill="#1C1744" stroke="#07051A" strokeWidth="2" />
+          <path d="M10 29 L20 10 L30 29 Z" fill="none" stroke="#FF9E7A" strokeWidth="2.4" strokeLinejoin="round" />
+          <circle cx="20" cy="23" r="5.5" fill="#FFD9A8" opacity=".35" />
+          <path d="M20 18.2 L21.3 21.7 L24.8 23 L21.3 24.3 L20 27.8 L18.7 24.3 L15.2 23 L18.7 21.7 Z" fill="#FFF2E2" />
+        </svg>
+        <h1>Last Light</h1>
+      </header>
+      <p className="splash-night">
+        {data ? `Night ${data.night} · ${LEVEL[data.difficulty]}` : failed ? 'A daily star puzzle' : ' '}
+      </p>
+
+      <svg className="splash-sky" viewBox="-4 -4 108 108" aria-label="Tonight's thirteen stars">
+        <defs>
+          <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.5" />
+          </filter>
+        </defs>
+        {data?.points.map(([x, y], i) => (
+          <g key={i}>
+            <circle cx={x} cy={y} r={4} fill="#FFD9A8" opacity={0.45} filter="url(#glow)" />
+            <circle cx={x} cy={y} r={2.1} fill="#FFF2E2" />
+          </g>
+        ))}
+      </svg>
+
+      <p className="splash-rule">
+        Circle <b>exactly one</b> star with a triangle. Keep one star shining.
+      </p>
+      {data && (
+        <div className="splash-chips">
+          <span className="chip">✦ {data.lit.toLocaleString()} lit {tonight ? 'tonight' : 'this sky'}</span>
+          {data.lit > 0 && (
+            <span className="chip">
+              Sky lit {data.litStars}/{data.possibleStars}
+            </span>
+          )}
+        </div>
+      )}
+      {data?.topName && <p className="splash-name">Named “{data.topName}” by the community</p>}
+      <button className="splash-play" onClick={play}>
+        {data?.solved ? 'See the shared sky' : tonight ? 'Play tonight’s sky' : 'Play this sky'}
+      </button>
+    </main>
   );
 };
 

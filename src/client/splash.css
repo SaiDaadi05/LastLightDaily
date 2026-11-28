@@ -1,0 +1,108 @@
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+.splash {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 16px 14px;
+  color: #fff2e2;
+  font-family: Inter, system-ui, sans-serif;
+  background: linear-gradient(#120e2e 0, #120e2e 55%, #1d1745 55%, #1d1745 82%, #2b1f55 82%);
+  cursor: pointer;
+  user-select: none;
+}
+.splash-moon {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  right: -110px;
+  top: -140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd9a8 0, transparent 70%);
+  opacity: 0.12;
+  pointer-events: none;
+}
+.splash-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.splash-head h1 {
+  margin: 0;
+  font-family: Outfit, Inter, sans-serif;
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+}
+.splash-night {
+  margin: 0;
+  min-height: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffd9a8;
+}
+.splash-sky {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 300px;
+}
+.splash-rule {
+  margin: 0;
+  max-width: 320px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #d6cef0;
+}
+.splash-rule b {
+  color: #fff2e2;
+}
+.splash-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.chip {
+  font-family: Fredoka, Inter, sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 2px solid #07051a;
+  background: #1c1744;
+  box-shadow: 0 3px 0 #07051a;
+}
+.splash-name {
+  margin: 0;
+  font-size: 13px;
+  color: #a59ccb;
+}
+.splash-play {
+  margin-top: 4px;
+  height: 48px;
+  padding: 0 26px;
+  border-radius: 16px;
+  border: 2.5px solid #07051a;
+  background: #ffd9a8;
+  color: #07051a;
+  font: 600 16px Fredoka, Inter, sans-serif;
+  box-shadow: 0 4px 0 #07051a;
+  cursor: pointer;
+}
+.splash-play:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #07051a;
+}

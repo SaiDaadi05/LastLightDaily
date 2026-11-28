@@ -5,8 +5,8 @@
     "dir": "dist/client",
     "entrypoints": {
       "default": {
-        "inline": true,
-        "entry": "splash.html"
+        "entry": "splash.html",
+        "height": "tall"
       },
       "game": {
         "entry": "game.html"
@@ -20,23 +20,13 @@
   "menu": {
     "items": [
       {
-        "label": "Create a new post",
-        "description": "lastlightdaily",
+        "label": "Post tonight’s sky",
+        "description": "Last Light: post (or open) tonight’s star puzzle",
         "location": "subreddit",
         "forUserType": "moderator",
-        "endpoint": "/internal/menu/post-create"
-      },
-      {
-        "label": "Example form",
-        "description": "Show a simple form",
-        "location": "subreddit",
-        "forUserType": "moderator",
-        "endpoint": "/internal/menu/example-form"
+        "endpoint": "/internal/menu/post-tonight"
       }
     ]
-  },
-  "forms": {
-    "exampleForm": "/internal/form/example-submit"
   },
   "triggers": {
     "onAppInstall": "/internal/triggers/on-app-install"
@@ -47,5 +37,20 @@
   },
   "dev": {
     "subreddit": "lastlightdaily_dev"
+  },
+  "permissions": {
+    "redis": true,
+    "reddit": {
+      "enable": true,
+      "scope": "user"
+    }
+  },
+  "scheduler": {
+    "tasks": {
+      "nightly-sky": {
+        "endpoint": "/internal/scheduler/nightly-sky",
+        "cron": "1 0 * * *"
+      }
+    }
   }
 }
