@@ -44,11 +44,15 @@ export function PosterSheet({
     if (posting) return;
     setPosting(true);
     try {
-      if (!(await canRunAsUser(e.nativeEvent))) {
-        setNote('No problem. You can copy the text and paste it in the comments instead.');
-        return;
+      // Post from your own account if Reddit allows it; otherwise Last Light posts it with your username.
+      let asUser = false;
+      try {
+        asUser = await canRunAsUser(e.nativeEvent);
+      } catch {
+        asUser = false;
       }
-      const r = await postComment(puzzle.number, moves, undos ?? 0);
+      let r = await postComment(puzzle.number, moves, undos ?? 0, asUser ? 'user' : 'app');
+      if (!r && asUser) r = await postComment(puzzle.number, moves, undos ?? 0, 'app');
       if (r) {
         setCommentUrl(r.url);
         showToast('Your result is in the comments.');
